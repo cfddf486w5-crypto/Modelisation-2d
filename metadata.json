@@ -1,0 +1,6 @@
+{
+  "name": "Entrepôt IA",
+  "description": "Un outil de conception 2D pour dessiner et générer un plan d'entrepôt structuré par l'IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
