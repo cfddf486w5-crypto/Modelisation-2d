@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { CanvasDraw } from './components/CanvasDraw';
+import { CanvasDrawPro } from './components/CanvasDrawPro';
 import { WarehouseView } from './components/WarehouseView';
-import { WarehouseLayout } from './types';
+import { WarehouseItem, WarehouseLayout } from './types';
 import { Box, Layout } from 'lucide-react';
+
+/** Croquis libre analysé par l'IA, ou édition directe d'objets typés. */
+type EditorMode = 'sketch' | 'structured';
 
 export default function App() {
   const [layout, setLayout] = useState<WarehouseLayout | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<EditorMode>('sketch');
+  const [items, setItems] = useState<WarehouseItem[]>([]);
 
   const handleProcessImage = async (base64Image: string) => {
     setIsProcessing(true);
@@ -44,6 +50,24 @@ export default function App() {
           <span className="text-xs font-medium text-slate-300 uppercase tracking-widest">Entrepôt IA</span>
         </div>
         <div className="flex gap-2">
+          <div className="flex rounded overflow-hidden border border-slate-600 mr-2">
+            <button
+              onClick={() => setMode('sketch')}
+              className={`px-3 py-1 text-xs font-bold transition-colors ${
+                mode === 'sketch' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              CROQUIS IA
+            </button>
+            <button
+              onClick={() => setMode('structured')}
+              className={`px-3 py-1 text-xs font-bold transition-colors ${
+                mode === 'structured' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              ÉDITEUR STRUCTURÉ
+            </button>
+          </div>
           <button className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-xs font-bold transition-colors">GÉNÉRER LE PLAN 3D</button>
           <button className="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs font-bold transition-colors">EXPORTER PDF</button>
         </div>
@@ -58,7 +82,9 @@ export default function App() {
 
 
         <div className="flex-1 flex overflow-hidden w-full h-full">
-          {!layout ? (
+          {mode === 'structured' ? (
+            <CanvasDrawPro items={items} setItems={setItems} />
+          ) : !layout ? (
             <CanvasDraw onProcess={handleProcessImage} isProcessing={isProcessing} />
           ) : (
             <WarehouseView layout={layout} onReset={() => setLayout(null)} />
